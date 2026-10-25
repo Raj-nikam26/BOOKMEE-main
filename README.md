@@ -62,9 +62,6 @@ BOOKMEE-main/
 │       ├── components/      Layout, marketplace and dashboard components
 │       ├── api/             API calls
 │       └── assets/          Images and style maps
-├── docs/
-│   ├── FEATURES.md          How the main features work and where their code is
-│   └── DEPLOYMENT.md        Step-by-step deployment guide
 └── render.yaml              Backend deployment settings (Render)
 ```
 
@@ -142,7 +139,7 @@ A hybrid recommender, trained offline and served in two stages:
 - **Popularity signal.**
 - **Adjustments:** time decay, diminishing returns, a confidence weight for new customers, and a diversity cap per category.
 
-On the sample data, the model's leave-one-out HitRate@5 is about 42%, against 21% for a most-popular baseline. That figure measures patterns in generated sample data, not real users. Details are in [docs/FEATURES.md](docs/FEATURES.md).
+On the sample data, the model's leave-one-out HitRate@5 is about 42%, against 21% for a most-popular baseline. That figure measures patterns in generated sample data, not real users.
 
 ---
 
@@ -160,7 +157,7 @@ On the sample data, the model's leave-one-out HitRate@5 is about 42%, against 21
 
 ## Deployment
 
-The backend deploys to Render (`render.yaml` included) and the frontend to Vercel (`frontend/vercel.json` included), with MongoDB Atlas as the database. See **[docs/DEPLOYMENT.md](docs/DEPLOYMENT.md)**.
+The backend deploys to Render (`render.yaml` included) and the frontend to Vercel (`frontend/vercel.json` included), with MongoDB Atlas as the database.
 
 ---
 

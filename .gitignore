@@ -15,3 +15,7 @@ frontend/assets-original
 *.log
 *.pdf
 *.docx
+
+# Kept on the local machine only
+start-bookme.bat
+docs/
