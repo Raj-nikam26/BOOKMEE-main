@@ -1,0 +1,37 @@
+# Render blueprint for the BookMe API (the "backend" folder).
+# In Render: New + -> Blueprint -> pick this repository. Render reads this file,
+# creates the service, and asks for every value marked "sync: false".
+services:
+  - type: web
+    name: bookme-api
+    runtime: node
+    plan: free
+    rootDir: backend
+    buildCommand: npm install --omit=dev
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_ENV
+        value: production
+      - key: TZ
+        value: Asia/Kolkata
+      - key: JWT_SECRET
+        generateValue: true # Render creates a long random secret
+      - key: MONGO_URI
+        sync: false # MongoDB Atlas connection string
+      - key: CLIENT_URL
+        sync: false # the frontend address, e.g. https://bookme.vercel.app (no trailing slash)
+      - key: ADMIN_EMAIL
+        sync: false
+      - key: ADMIN_PASSWORD
+        sync: false
+      - key: RAZORPAY_KEY_ID
+        sync: false
+      - key: RAZORPAY_KEY_SECRET
+        sync: false
+      - key: BREVO_API_KEY
+        sync: false
+      - key: BREVO_SENDER_EMAIL
+        sync: false
+      - key: BREVO_SENDER_NAME
+        value: BookMe
