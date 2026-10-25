@@ -472,7 +472,7 @@ export const createPublicBooking = async (req, res) => {
       });
     }
 
-    const stripe = getStripe();
+    const stripe = await getStripe();
     const session = await stripe.checkout.sessions.create({
       mode: 'payment',
       payment_method_types: ['card'],
@@ -672,7 +672,7 @@ export const getBookingStatus = async (req, res) => {
     }
 
     if (sessionId && booking.status === 'pending_payment') {
-      const stripe = getStripe();
+      const stripe = await getStripe();
       if (!stripe) {
         return res.status(503).json({ message: 'Stripe payments are not configured yet' });
       }

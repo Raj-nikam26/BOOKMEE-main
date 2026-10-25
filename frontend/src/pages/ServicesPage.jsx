@@ -322,7 +322,7 @@ export default function ServicesPage() {
               </div>
             )}
 
-            {services.map((service, idx) => (
+            {services.map((service) => (
               <article key={service._id} className={s.serviceCard}>
                 <div className={s.serviceCardInner}>
                   <div className={s.serviceInfoRow}>

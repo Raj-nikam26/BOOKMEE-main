@@ -67,8 +67,9 @@ export default function PaymentsPage() {
   };
 
   useEffect(() => {
-    loadOverview()
-      .then((data) => {
+    getPaymentOverview()
+      .then(({ data }) => {
+        setOverview(data);
         const saved = data.payoutDetails || {};
         setForm((prev) => ({
           ...prev,

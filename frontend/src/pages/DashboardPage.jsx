@@ -16,7 +16,6 @@ import {
   Copy,
   RefreshCcw,
 } from "lucide-react";
-import logo from "../assets/logo.png";
 import p1Image from "../assets/P1.png";
 import whatsappLogo from "../assets/WhatsApp-Logo.wine.png";
 import instaLogo from "../assets/Instagram-Glyph-Color-Logo.wine.png";

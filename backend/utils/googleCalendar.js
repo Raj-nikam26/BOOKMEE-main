@@ -1,15 +1,25 @@
-import { google } from 'googleapis';
 import { buildCustomerCalendarUrl } from './calendarLink.js';
+
+// googleapis is large and slow to load, and most installs never connect a
+// calendar, so it is only imported the first time it is needed.
+let googlePromise = null;
+const loadGoogle = () => {
+  googlePromise ||= import('googleapis').then((module) => module.google);
+  return googlePromise;
+};
 
 export const isGoogleConfigured = () => Boolean(process.env.GOOGLE_CLIENT_ID && process.env.GOOGLE_CLIENT_SECRET);
 
-export const getOAuthClient = () => new google.auth.OAuth2(
-  process.env.GOOGLE_CLIENT_ID,
-  process.env.GOOGLE_CLIENT_SECRET,
-  process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback'
-);
+export const getOAuthClient = async () => {
+  const google = await loadGoogle();
+  return new google.auth.OAuth2(
+    process.env.GOOGLE_CLIENT_ID,
+    process.env.GOOGLE_CLIENT_SECRET,
+    process.env.GOOGLE_REDIRECT_URI || 'http://localhost:5000/api/auth/google/callback'
+  );
+};
 
-export const getGoogleAuthUrl = (state) => getOAuthClient().generateAuthUrl({
+export const getGoogleAuthUrl = async (state) => (await getOAuthClient()).generateAuthUrl({
   access_type: 'offline',
   prompt: 'consent',
   scope: ['https://www.googleapis.com/auth/calendar.events'],
@@ -23,10 +33,10 @@ export const createBookingCalendarEvent = async ({ business, service, booking })
     return { customerCalendarUrl };
   }
 
-  const oauth2Client = getOAuthClient();
+  const oauth2Client = await getOAuthClient();
   oauth2Client.setCredentials({ refresh_token: business.googleRefreshToken });
 
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  const calendar = (await loadGoogle()).calendar({ version: 'v3', auth: oauth2Client });
   const summary = `${service.name} - ${booking.customerName}`;
   const description = [
     `Customer: ${booking.customerName}`,
@@ -78,10 +88,10 @@ export const updateBookingCalendarEvent = async ({ business, service, booking })
     return createBookingCalendarEvent({ business, service, booking });
   }
 
-  const oauth2Client = getOAuthClient();
+  const oauth2Client = await getOAuthClient();
   oauth2Client.setCredentials({ refresh_token: business.googleRefreshToken });
 
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  const calendar = (await loadGoogle()).calendar({ version: 'v3', auth: oauth2Client });
   const summary = `${service.name} - ${booking.customerName}`;
   const description = [
     `Customer: ${booking.customerName}`,
@@ -128,10 +138,10 @@ export const cancelBookingCalendarEvent = async ({ business, booking }) => {
     return false;
   }
 
-  const oauth2Client = getOAuthClient();
+  const oauth2Client = await getOAuthClient();
   oauth2Client.setCredentials({ refresh_token: business.googleRefreshToken });
 
-  const calendar = google.calendar({ version: 'v3', auth: oauth2Client });
+  const calendar = (await loadGoogle()).calendar({ version: 'v3', auth: oauth2Client });
   await calendar.events.patch({
     calendarId: business.googleCalendarId || 'primary',
     eventId: booking.googleEventId,

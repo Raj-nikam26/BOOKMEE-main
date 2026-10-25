@@ -201,7 +201,7 @@ export const getGoogleConnectUrl = async (req, res) => {
   }
 
   const state = jwt.sign({ id: req.user.id }, process.env.JWT_SECRET, { expiresIn: '15m' });
-  res.json({ url: getGoogleAuthUrl(state) });
+  res.json({ url: await getGoogleAuthUrl(state) });
 };
 
 export const handleGoogleCallback = async (req, res) => {
@@ -210,7 +210,7 @@ export const handleGoogleCallback = async (req, res) => {
   try {
     const { code, state } = req.query;
     const { id } = jwt.verify(state, process.env.JWT_SECRET, { algorithms: ['HS256'] });
-    const { tokens } = await getOAuthClient().getToken(code);
+    const { tokens } = await (await getOAuthClient()).getToken(code);
 
     const updates = { googleCalendarConnected: true };
     if (tokens.refresh_token) updates.googleRefreshToken = tokens.refresh_token;

@@ -1,11 +1,13 @@
-import Stripe from 'stripe';
-
 const PLATFORM_FEE_PERCENT = 10;
 let stripeClient = null;
 
-export const getStripe = () => {
+// The Stripe SDK is only loaded when a Stripe key is configured and used.
+export const getStripe = async () => {
   if (!process.env.STRIPE_SECRET_KEY) return null;
-  if (!stripeClient) stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+  if (!stripeClient) {
+    const { default: Stripe } = await import('stripe');
+    stripeClient = new Stripe(process.env.STRIPE_SECRET_KEY);
+  }
   return stripeClient;
 };
 
