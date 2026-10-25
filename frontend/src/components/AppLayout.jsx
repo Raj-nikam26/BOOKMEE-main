@@ -214,14 +214,6 @@ export default function AppLayout({ children }) {
             <Link to="/terms" className={s.footerLink}>
               Terms of Service
             </Link>
-            <a
-              href="https://hexagondigitalservices.com"
-              target="_blank"
-              rel="noreferrer"
-              className={s.footerCredit}
-            >
-              Original design by Hexagon Digital Services
-            </a>
           </div>
         </div>
       </footer>

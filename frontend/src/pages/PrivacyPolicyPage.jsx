@@ -156,13 +156,7 @@ export default function PrivacyPolicyPage() {
           <section>
             <h2 className="text-xl font-extrabold text-slate-900 mb-3">11. Contact Us</h2>
             <p className="text-[15px] text-slate-600 leading-relaxed">
-              If you have questions or concerns about this Privacy Policy, please contact us at:{" "}
-              <a
-                href="mailto:support@hexagondigitalservices.com"
-                className="text-brand-600 font-semibold hover:underline"
-              >
-                support@hexagondigitalservices.com
-              </a>
+              If you have questions or concerns about this Privacy Policy, please reply to any email you have received from BookMe and the BookMe team will get back to you.
             </p>
           </section>
         </div>

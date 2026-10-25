@@ -115,8 +115,7 @@ export default function TermsOfServicePage() {
             <h2 className="text-xl font-extrabold text-slate-900 mb-3">7. Intellectual Property</h2>
             <p className="text-[15px] text-slate-600 leading-relaxed">
               The Service and its original content (excluding content provided by users), features, and
-              functionality are and will remain the exclusive property of BookMe and Hexagon Digital
-              Services. The Service is protected by copyright, trademark, and other applicable laws.
+              functionality are and will remain the exclusive property of BookMe. The Service is protected by copyright, trademark, and other applicable laws.
               You are granted a limited, non-exclusive, non-transferable license to use the Service for
               its intended purpose.
             </p>
@@ -178,13 +177,7 @@ export default function TermsOfServicePage() {
           <section>
             <h2 className="text-xl font-extrabold text-slate-900 mb-3">13. Contact Us</h2>
             <p className="text-[15px] text-slate-600 leading-relaxed">
-              If you have questions about these Terms, please contact us at:{" "}
-              <a
-                href="mailto:support@hexagondigitalservices.com"
-                className="text-brand-600 font-semibold hover:underline"
-              >
-                support@hexagondigitalservices.com
-              </a>
+              If you have questions about these Terms, please reply to any email you have received from BookMe and the BookMe team will get back to you.
             </p>
           </section>
         </div>

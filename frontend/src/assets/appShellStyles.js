@@ -44,7 +44,6 @@ export const shellStyles = {
   footerInner: "mx-auto flex max-w-7xl flex-col items-center justify-between gap-3 px-4 py-5 text-[12px] font-medium text-slate-400 sm:flex-row md:px-6",
   footerLinks: "flex flex-wrap items-center justify-center gap-x-4 gap-y-1",
   footerLink: "hover:text-brand-600",
-  footerCredit: "font-semibold text-slate-500 hover:text-brand-600",
 };
 
 export const setupStyles = {

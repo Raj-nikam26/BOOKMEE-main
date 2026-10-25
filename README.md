@@ -65,8 +65,7 @@ BOOKMEE-main/
 ├── docs/
 │   ├── FEATURES.md          How the main features work and where their code is
 │   └── DEPLOYMENT.md        Step-by-step deployment guide
-├── render.yaml              Backend deployment blueprint (Render)
-└── start-bookme.bat         Starts backend and frontend on Windows
+└── render.yaml              Backend deployment settings (Render)
 ```
 
 ---
@@ -101,7 +100,7 @@ BOOKMEE-main/
    ```bash
    cd frontend && npm run dev
    ```
-   Open http://localhost:5173 (the API runs on http://localhost:5000). On Windows, double-clicking `start-bookme.bat` does both.
+   Open http://localhost:5173 (the API runs on http://localhost:5000).
 
 ### Useful commands
 
