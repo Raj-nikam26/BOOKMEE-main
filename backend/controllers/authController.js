@@ -216,10 +216,10 @@ export const handleGoogleCallback = async (req, res) => {
     if (tokens.refresh_token) updates.googleRefreshToken = tokens.refresh_token;
     await User.findByIdAndUpdate(id, updates);
 
-    res.redirect(`${clientUrl}/profile?calendar=connected`);
+    res.redirect(`${clientUrl}/business/profile?calendar=connected`);
   } catch (error) {
     console.error('Google Calendar connection failed:', error.message);
-    res.redirect(`${clientUrl}/profile?calendar=failed`);
+    res.redirect(`${clientUrl}/business/profile?calendar=failed`);
   }
 };
 

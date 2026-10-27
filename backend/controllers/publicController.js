@@ -384,6 +384,7 @@ export const createPublicBooking = async (req, res) => {
       currency,
       paymentStatus: amount > 0 ? 'pending' : 'not_required',
       status: amount > 0 ? 'pending_payment' : 'confirmed',
+      confirmedAt: amount > 0 ? undefined : new Date(),
       customerCalendarUrl,
     });
 
@@ -539,6 +540,7 @@ const confirmPaidBooking = async ({ booking, business, service, session }) => {
   }
 
   booking.status = 'confirmed';
+  booking.confirmedAt = new Date();
   booking.paymentStatus = 'paid';
   booking.payoutStatus = booking.providerPayoutAmount > 0 ? 'available' : 'not_required';
 

@@ -1,6 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect, useMemo, useState } from "react";
 import AppLayout from "../components/AppLayout";
+import { BOOKINGS_CHANGED_EVENT } from "../utils/bookingAlertState";
 import ReviewsCard from "../components/business/ReviewsCard";
 import SetupChecklist from "../components/business/SetupChecklist";
 import { getMe } from "../api/auth";
@@ -447,6 +448,11 @@ export default function DashboardPage() {
       setWallet(paymentsResponse.data.wallet || null);
     };
     loadDashboard().catch(() => {});
+
+    // A new booking or a customer cancellation refreshes the numbers.
+    const reload = () => loadDashboard().catch(() => {});
+    window.addEventListener(BOOKINGS_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(BOOKINGS_CHANGED_EVENT, reload);
   }, []);
 
   const publicLink = user?.slug
@@ -729,13 +735,13 @@ export default function DashboardPage() {
             Here's what's happening with your business today.
           </p>
           <div className={s.headerButtonsContainer}>
-            <Link to="/services" className={s.headerButton}>
+            <Link to="/business/services" className={s.headerButton}>
               Add services
             </Link>
-            <Link to="/availability" className={s.headerButton}>
+            <Link to="/business/availability" className={s.headerButton}>
               Set availability
             </Link>
-            <Link to="/payments" className={s.headerButton}>
+            <Link to="/business/payments" className={s.headerButton}>
               Payment details
             </Link>
           </div>
@@ -762,7 +768,7 @@ export default function DashboardPage() {
                   View booking page <ArrowRight className={s.arrowIcon} />
                 </a>
               ) : (
-                <Link to="/profile" className={s.heroButton}>
+                <Link to="/business/profile" className={s.heroButton}>
                   Setup booking page <ArrowRight className={s.arrowIcon} />
                 </Link>
               )}
@@ -943,7 +949,7 @@ export default function DashboardPage() {
           <div className={s.topServicesCard}>
             <div className={s.servicesHeader}>
               <h3 className={s.chartTitle}>Top Services</h3>
-              <Link to="/services" className={s.viewAllLink}>
+              <Link to="/business/services" className={s.viewAllLink}>
                 View all
               </Link>
             </div>
@@ -1057,7 +1063,7 @@ export default function DashboardPage() {
           <div className={s.upcomingCard}>
             <div className={s.upcomingHeader}>
               <h3 className={s.chartTitle}>Upcoming Bookings</h3>
-              <Link to="/bookings" className={s.viewAllLink}>
+              <Link to="/business/bookings" className={s.viewAllLink}>
                 View all
               </Link>
             </div>
@@ -1142,7 +1148,7 @@ export default function DashboardPage() {
                         Connected
                       </span>
                     ) : (
-                      <Link to="/profile" className={statusStyles.off}>
+                      <Link to="/business/profile" className={statusStyles.off}>
                         Not connected
                       </Link>
                     )}

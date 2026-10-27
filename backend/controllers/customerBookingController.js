@@ -137,6 +137,7 @@ export const cancelMyBooking = async (req, res) => {
     }
 
     booking.status = 'cancelled';
+    booking.cancelledByCustomerAt = new Date();
     await booking.save();
 
     // The slot is free again as soon as the status changes (slots only count

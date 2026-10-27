@@ -7,6 +7,10 @@ export const listBookings = (params = {}) =>
 export const listMyReviews = (page = 1) =>
   client.get("/bookings/reviews", { params: { page } });
 
+// New bookings and customer cancellations since `since` (from the previous call).
+export const getBookingUpdates = (since) =>
+  client.get("/bookings/updates", { params: since ? { since } : {} });
+
 export const updateBookingStatus = (id, status) =>
   client.patch(`/bookings/${id}`, { status });
 

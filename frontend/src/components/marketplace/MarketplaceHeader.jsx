@@ -6,8 +6,10 @@ import { isBusinessLoggedIn } from "../../utils/customerSession";
 /**
  * Top bar of the customer-facing pages.
  * `customer` is the logged-in customer (or null) and `onLogout` logs them out.
+ * `returnTo` is the page to come back to after logging in (e.g. a booking page).
  */
-export default function MarketplaceHeader({ customer, onLogout }) {
+export default function MarketplaceHeader({ customer, onLogout, returnTo }) {
+  const nextQuery = returnTo ? `?next=${encodeURIComponent(returnTo)}` : "";
   // A business looking at the marketplace sees it as a visitor would, with a
   // way back to its dashboard instead of the customer login buttons.
   const isBusiness = isBusinessLoggedIn();
@@ -24,7 +26,7 @@ export default function MarketplaceHeader({ customer, onLogout }) {
           {customer ? (
             <>
               <NavLink
-                to="/account/bookings"
+                to="/my-bookings"
                 className={({ isActive }) => (isActive ? s.linkActive : s.link)}
               >
                 My bookings
@@ -40,19 +42,19 @@ export default function MarketplaceHeader({ customer, onLogout }) {
               </button>
             </>
           ) : isBusiness ? (
-            <Link to="/dashboard" className={s.primary}>
+            <Link to="/business/dashboard" className={s.primary}>
               Back to dashboard
             </Link>
           ) : (
             <>
-              <Link to="/account" className={s.link}>
+              <Link to={`/login${nextQuery}`} className={s.link}>
                 Log in
               </Link>
-              <Link to="/account?mode=register" className={s.primary}>
+              <Link to={`/signup${nextQuery}`} className={s.primary}>
                 Sign up
               </Link>
               <span className={s.divider} />
-              <Link to="/login" className={s.business}>
+              <Link to="/business/login" className={s.business}>
                 For business
               </Link>
             </>

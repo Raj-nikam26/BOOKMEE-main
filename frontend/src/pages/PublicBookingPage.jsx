@@ -1,5 +1,5 @@
 import { useEffect, useMemo, useState } from "react";
-import { Link, useNavigate, useParams } from "react-router-dom";
+import { Link, useLocation, useNavigate, useParams } from "react-router-dom";
 import {
   cancelBookingPayment,
   createPublicBooking,
@@ -54,7 +54,11 @@ import {
   getBrandThemeStyle,
   publicBookingPageStyles as s,
 } from "../assets/dummyStyles";
-import { getCustomerSession } from "../utils/customerSession";
+import MarketplaceHeader from "../components/marketplace/MarketplaceHeader";
+import {
+  clearCustomerSession,
+  getCustomerSession,
+} from "../utils/customerSession";
 import { openRazorpayCheckout } from "../utils/razorpayCheckout";
 
 // Local calendar date as YYYY-MM-DD (toISOString would give the UTC date,
@@ -119,6 +123,7 @@ const themeBannerImages = {
 export default function PublicBookingPage() {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const location = useLocation();
   const [customer] = useState(getCustomerSession);
   const [business, setBusiness] = useState(null);
   const [services, setServices] = useState([]);
@@ -356,6 +361,15 @@ export default function PublicBookingPage() {
   };
 
   return (
+    <>
+    <MarketplaceHeader
+      customer={customer}
+      onLogout={() => {
+        clearCustomerSession();
+        window.location.reload();
+      }}
+      returnTo={location.pathname}
+    />
     <div className={s.pageContainer} style={brandStyleVars}>
       <main className={s.mainGrid}>
         {/* LEFT: Business sidebar */}
@@ -829,5 +843,6 @@ export default function PublicBookingPage() {
         </section>
       </main>
     </div>
+    </>
   );
 }

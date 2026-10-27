@@ -11,6 +11,7 @@ import {
   XCircle,
 } from "lucide-react";
 import AppLayout from "../components/AppLayout";
+import { BOOKINGS_CHANGED_EVENT } from "../utils/bookingAlertState";
 import {
   listBookings,
   rescheduleBooking,
@@ -67,6 +68,14 @@ export default function BookingsPage() {
   const [paging, setPaging] = useState({ page: 1, hasMore: false, total: 0 });
   const [loadingMore, setLoadingMore] = useState(false);
   const [filters, setFilters] = useState({ date: "", status: "all" });
+  const [reloadKey, setReloadKey] = useState(0);
+
+  // A new booking or a customer cancellation reloads the first page.
+  useEffect(() => {
+    const reload = () => setReloadKey((key) => key + 1);
+    window.addEventListener(BOOKINGS_CHANGED_EVENT, reload);
+    return () => window.removeEventListener(BOOKINGS_CHANGED_EVENT, reload);
+  }, []);
   const [message, setMessage] = useState("");
   const [cancelModalBookingId, setCancelModalBookingId] = useState(null);
   const [rescheduleModalBooking, setRescheduleModalBooking] = useState(null);
@@ -93,7 +102,7 @@ export default function BookingsPage() {
       .catch((error) =>
         setMessage(error.response?.data?.message || "Could not load bookings"),
       );
-  }, [filters]);
+  }, [filters, reloadKey]);
 
   const loadMore = async () => {
     setLoadingMore(true);

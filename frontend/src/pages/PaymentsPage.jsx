@@ -309,7 +309,7 @@ export default function PaymentsPage() {
                 <CreditCard className={s.recentActivityTitleIcon} />
                 Recent activity
               </h2>
-              <Link to="/bookings" className={s.bookingsLink}>
+              <Link to="/business/bookings" className={s.bookingsLink}>
                 Bookings
                 <ExternalLink className={s.bookingsLinkIcon} />
               </Link>

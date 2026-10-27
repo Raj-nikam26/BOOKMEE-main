@@ -32,7 +32,7 @@ export default function NotFoundPage() {
         </Link>
         {isBusinessLoggedIn && (
           <Link
-            to="/dashboard"
+            to="/business/dashboard"
             className="rounded-full border border-slate-300 bg-white px-5 py-2.5 text-[13px] font-semibold text-slate-800 hover:border-slate-400"
           >
             Go to my dashboard

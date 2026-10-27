@@ -299,7 +299,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                 </div>
-                <Link to="/account?mode=register" className={s.promptButton}>
+                <Link to="/signup" className={s.promptButton}>
                   Create free account
                 </Link>
               </div>
@@ -325,7 +325,7 @@ export default function LandingPage() {
                     </p>
                   </div>
                 </div>
-                <Link to="/account/bookings?tab=past" className={s.promptButton}>
+                <Link to="/my-bookings?tab=past" className={s.promptButton}>
                   Rate now
                 </Link>
               </div>
@@ -563,10 +563,10 @@ export default function LandingPage() {
             </p>
           </div>
           <div className={s.ctaActions}>
-            <Link to="/login?mode=register" className={s.ctaPrimary}>
+            <Link to="/business/signup" className={s.ctaPrimary}>
               List your business
             </Link>
-            <Link to="/login" className={s.ctaSecondary}>
+            <Link to="/business/login" className={s.ctaSecondary}>
               Business login
             </Link>
           </div>
@@ -589,12 +589,12 @@ export default function LandingPage() {
             <p className={s.footerHeading}>Customers</p>
             <ul className={s.footerList}>
               <li>
-                <Link to="/account" className={s.footerLink}>
+                <Link to="/login" className={s.footerLink}>
                   Log in
                 </Link>
               </li>
               <li>
-                <Link to="/account/bookings" className={s.footerLink}>
+                <Link to="/my-bookings" className={s.footerLink}>
                   My bookings
                 </Link>
               </li>
@@ -604,7 +604,7 @@ export default function LandingPage() {
             <p className={s.footerHeading}>Company</p>
             <ul className={s.footerList}>
               <li>
-                <Link to="/login" className={s.footerLink}>
+                <Link to="/business/login" className={s.footerLink}>
                   For business
                 </Link>
               </li>

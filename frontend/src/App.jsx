@@ -25,14 +25,14 @@ import {
 enforceSingleAccount();
 
 const ProviderRoute = ({ children }) =>
-  localStorage.getItem("token") ? children : <Navigate to="/login" replace />;
+  localStorage.getItem("token") ? children : <Navigate to="/business/login" replace />;
 
 // The home page is the marketplace for customers and visitors.
 // A logged-in business is sent to its dashboard instead; it can still open the
 // marketplace from its account menu (/marketplace).
 const HomeRoute = () =>
   isBusinessLoggedIn() ? (
-    <Navigate to="/dashboard" replace />
+    <Navigate to="/business/dashboard" replace />
   ) : (
     <LandingPage />
   );
@@ -45,12 +45,20 @@ const AdminRoute = ({ children }) =>
   );
 
 const providerPages = [
-  { path: "/dashboard", element: <DashboardPage /> },
-  { path: "/services", element: <ServicesPage /> },
-  { path: "/availability", element: <AvailabilityPage /> },
-  { path: "/bookings", element: <BookingsPage /> },
-  { path: "/payments", element: <PaymentsPage /> },
-  { path: "/profile", element: <ProfilePage /> },
+  { path: "/business/dashboard", element: <DashboardPage /> },
+  { path: "/business/services", element: <ServicesPage /> },
+  { path: "/business/availability", element: <AvailabilityPage /> },
+  { path: "/business/bookings", element: <BookingsPage /> },
+  { path: "/business/payments", element: <PaymentsPage /> },
+  { path: "/business/profile", element: <ProfilePage /> },
+];
+
+const legacyRedirects = [
+  ["/account", "/login"],
+  ["/account/bookings", "/my-bookings"],
+  ...["dashboard", "services", "availability", "bookings", "payments", "profile"].map(
+    (page) => [`/${page}`, `/business/${page}`],
+  ),
 ];
 
 function App() {
@@ -65,14 +73,25 @@ function App() {
           />
         ))}
 
-        {/* Public marketplace */}
+        {/* Customers */}
         <Route path="/" element={<HomeRoute />} />
         <Route path="/marketplace" element={<LandingPage />} />
-        <Route path="/account" element={<CustomerAuthPage />} />
-        <Route path="/account/bookings" element={<MyBookingsPage />} />
-        <Route path="/login" element={<AuthPage />} />
+        <Route path="/login" element={<CustomerAuthPage key="login" mode="login" />} />
+        <Route path="/signup" element={<CustomerAuthPage key="signup" mode="register" />} />
+        <Route path="/my-bookings" element={<MyBookingsPage />} />
+
+        {/* Businesses (their other pages are listed in providerPages above) */}
+        <Route path="/business" element={<Navigate to="/business/dashboard" replace />} />
+        <Route path="/business/login" element={<AuthPage key="login" mode="login" />} />
+        <Route path="/business/signup" element={<AuthPage key="signup" mode="register" />} />
+
         <Route path="/privacy" element={<PrivacyPolicyPage />} />
         <Route path="/terms" element={<TermsOfServicePage />} />
+
+        {/* Old addresses, so links shared earlier still work */}
+        {legacyRedirects.map(([from, to]) => (
+          <Route key={from} path={from} element={<Navigate to={to} replace />} />
+        ))}
 
         {/* Customer-facing pages */}
         <Route path="/book/:slug" element={<PublicBookingPage />} />

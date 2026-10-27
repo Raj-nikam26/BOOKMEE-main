@@ -84,6 +84,56 @@ export const listBookings = async (req, res) => {
   }
 };
 
+const UPDATES_LOOKBACK_LIMIT_MS = 60 * 60 * 1000;
+
+/**
+ * What changed for this business since `since` (an ISO time from the previous
+ * call): new confirmed bookings and bookings the customer cancelled. The
+ * business app calls this every few seconds to show new bookings straight away.
+ * Returns `now`, to be sent back as `since` next time.
+ */
+export const getBookingUpdates = async (req, res) => {
+  try {
+    const now = new Date();
+    const requested = new Date(String(req.query.since || ''));
+    // First call, or a bad or very old value: start from now instead of
+    // replaying an old backlog as "new".
+    const since = Number.isNaN(requested.getTime()) || now - requested > UPDATES_LOOKBACK_LIMIT_MS
+      ? now
+      : requested;
+
+    const [confirmed, cancelled] = await Promise.all([
+      Booking.find({ userId: req.user.id, status: 'confirmed', confirmedAt: { $gt: since, $lte: now } })
+        .sort({ confirmedAt: 1 })
+        .limit(20)
+        .populate('serviceId', 'name')
+        .lean(),
+      Booking.find({ userId: req.user.id, cancelledByCustomerAt: { $gt: since, $lte: now } })
+        .sort({ cancelledByCustomerAt: 1 })
+        .limit(20)
+        .populate('serviceId', 'name')
+        .lean(),
+    ]);
+
+    const toUpdate = (type) => (booking) => ({
+      type,
+      id: booking._id,
+      customerName: booking.customerName,
+      serviceName: booking.serviceId?.name || 'Appointment',
+      date: booking.date,
+      startTime: booking.startTime,
+      amount: booking.amount,
+    });
+
+    res.json({
+      updates: [...confirmed.map(toUpdate('booked')), ...cancelled.map(toUpdate('cancelled'))],
+      now: now.toISOString(),
+    });
+  } catch (error) {
+    res.status(500).json({ message: 'Server error', error: error.message });
+  }
+};
+
 /**
  * Updates the status of a specific booking (e.g., confirmed, cancelled).
  * Handles sending email notifications to the customer about the status change.

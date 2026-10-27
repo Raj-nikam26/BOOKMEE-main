@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Link, NavLink, useNavigate } from "react-router-dom";
+import { Link, NavLink, useLocation, useNavigate } from "react-router-dom";
 import {
   CalendarCheck,
   ChevronDown,
@@ -15,16 +15,18 @@ import {
   X,
 } from "lucide-react";
 import { getMe } from "../api/auth";
+import BookingAlerts from "./business/BookingAlerts";
+import { bookingAlertState } from "../utils/bookingAlertState";
 import logo from "../assets/thumbs/logo.webp";
 import { shellStyles as s } from "../assets/appShellStyles";
 
 const navItems = [
-  { to: "/dashboard", label: "Dashboard", icon: LayoutDashboard },
-  { to: "/services", label: "Services", icon: Layers },
-  { to: "/availability", label: "Availability", icon: Clock },
-  { to: "/bookings", label: "Bookings", icon: CalendarCheck },
-  { to: "/payments", label: "Payments", icon: Wallet },
-  { to: "/profile", label: "Profile", icon: UserRound },
+  { to: "/business/dashboard", label: "Dashboard", icon: LayoutDashboard },
+  { to: "/business/services", label: "Services", icon: Layers },
+  { to: "/business/availability", label: "Availability", icon: Clock },
+  { to: "/business/bookings", label: "Bookings", icon: CalendarCheck },
+  { to: "/business/payments", label: "Payments", icon: Wallet },
+  { to: "/business/profile", label: "Profile", icon: UserRound },
 ];
 
 /**
@@ -36,6 +38,15 @@ export default function AppLayout({ children }) {
   const [menuOpen, setMenuOpen] = useState(false);
   const [mobileOpen, setMobileOpen] = useState(false);
   const accountRef = useRef(null);
+  const location = useLocation();
+
+  // The counter is for new bookings not yet seen on the Bookings page.
+  const onBookingsPage = location.pathname === "/business/bookings";
+  const [newBookings, setNewBookings] = useState(bookingAlertState.unseen);
+  const unseenBookings = onBookingsPage ? 0 : newBookings;
+  useEffect(() => {
+    if (onBookingsPage) bookingAlertState.unseen = 0;
+  }, [onBookingsPage, newBookings]);
 
   useEffect(() => {
     getMe()
@@ -44,7 +55,7 @@ export default function AppLayout({ children }) {
         // An expired or invalid session goes back to the login page.
         if (error.response?.status === 401 || error.response?.status === 404) {
           localStorage.removeItem("token");
-          navigate("/login");
+          navigate("/business/login");
         }
       });
   }, [navigate]);
@@ -69,8 +80,11 @@ export default function AppLayout({ children }) {
   }, [menuOpen]);
 
   const logout = () => {
+    // The next account on this browser starts its own booking alerts from scratch.
+    bookingAlertState.since = null;
+    bookingAlertState.unseen = 0;
     localStorage.removeItem("token");
-    navigate("/login");
+    navigate("/business/login");
   };
 
   const displayName = user?.businessName || user?.name || "Account";
@@ -80,7 +94,7 @@ export default function AppLayout({ children }) {
     <div className={s.container}>
       <header className={s.header}>
         <div className={s.headerInner}>
-          <Link to="/dashboard" className={s.logoLink}>
+          <Link to="/business/dashboard" className={s.logoLink}>
             <img src={logo} alt="BookMe" className={s.logoImg} />
             <span className={s.logoText}>BookMe</span>
           </Link>
@@ -96,6 +110,11 @@ export default function AppLayout({ children }) {
               >
                 <item.icon className={s.navIcon} />
                 {item.label}
+                {item.to === "/business/bookings" && unseenBookings > 0 && (
+                  <span className="ml-0.5 rounded-full bg-brand-600 px-1.5 py-0.5 text-[10px] font-bold leading-none text-white">
+                    {unseenBookings}
+                  </span>
+                )}
               </NavLink>
             ))}
           </nav>
@@ -195,6 +214,11 @@ export default function AppLayout({ children }) {
                 >
                   <item.icon className={s.navIcon} />
                   {item.label}
+                  {item.to === "/business/bookings" && unseenBookings > 0 && (
+                    <span className="ml-auto rounded-full bg-brand-600 px-2 py-0.5 text-[11px] font-bold text-white">
+                      {unseenBookings}
+                    </span>
+                  )}
                 </NavLink>
               ))}
             </div>
@@ -203,6 +227,8 @@ export default function AppLayout({ children }) {
       </header>
 
       <main className={s.main}>{children}</main>
+
+      <BookingAlerts onNew={setNewBookings} />
 
       <footer className={s.footer}>
         <div className={s.footerInner}>

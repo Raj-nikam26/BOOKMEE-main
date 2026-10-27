@@ -133,7 +133,7 @@ export default function MyBookingsPage() {
         if (cancelled) return;
         if (error.response?.status === 401) {
           clearCustomerSession();
-          navigate("/account");
+          navigate("/login");
           return;
         }
         setLoadFailed(true);
@@ -146,7 +146,7 @@ export default function MyBookingsPage() {
   }, [when, customer, navigate]);
 
   if (!customer) {
-    return <Navigate to="/account" replace />;
+    return <Navigate to="/login" replace />;
   }
 
   const loadMore = async () => {

@@ -32,12 +32,11 @@ const emptyForm = {
   password: "",
 };
 
-export default function AuthPage() {
+// mode: "login" or "register", decided by the address (/business/login or /business/signup).
+export default function AuthPage({ mode: initialMode = "login" }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [mode, setMode] = useState(
-    searchParams.get("mode") === "register" ? "register" : "login",
-  );
+  const mode = searchParams.get("mode") === "register" ? "register" : initialMode;
   const [form, setForm] = useState(emptyForm);
   const [loading, setLoading] = useState(false);
   const [message, setMessage] = useState("");
@@ -118,7 +117,7 @@ export default function AuthPage() {
         ? await register(form)
         : await login({ email: form.email, password: form.password });
       saveBusinessSession(data.token);
-      navigate("/dashboard");
+      navigate("/business/dashboard");
     } catch (error) {
       setMessage(error.response?.data?.message || "Something went wrong");
     } finally {
@@ -127,7 +126,7 @@ export default function AuthPage() {
   };
 
   if (localStorage.getItem("token")) {
-    return <Navigate to="/dashboard" replace />;
+    return <Navigate to="/business/dashboard" replace />;
   }
 
   return (
@@ -135,10 +134,13 @@ export default function AuthPage() {
       <div className={s.gridContainer}>
         {/* Left: brand */}
         <section className={s.brandSection}>
-          <div className={s.logoRow}>
+          <Link to="/" className={s.logoRow}>
             <img src={logo} alt="BookMe" className={s.logoImg} />
             <span className={s.brandName}>BookMe</span>
-          </div>
+          </Link>
+          <p className="text-[13px] font-bold uppercase tracking-[0.15em] text-brand-300">
+            For businesses
+          </p>
           <h1 className={s.mainHeading}>
             Bookings made
             <span className={s.gradientText}>simple.</span>
@@ -182,12 +184,12 @@ export default function AuthPage() {
         {/* Right: auth form */}
         <section className={s.formCard}>
           <h2 className={s.formHeading}>
-            {isRegister ? "Create account" : "Welcome back"}
+            {isRegister ? "Create your business account" : "Business login"}
           </h2>
           <p className={s.formSubtitle}>
             {isRegister
               ? "Set up your business in minutes"
-              : "Log in to manage your bookings"}
+              : "Log in to manage your services and bookings"}
           </p>
 
           <form onSubmit={handleSubmit} className={s.form}>
@@ -332,8 +334,7 @@ export default function AuthPage() {
           <button
             type="button"
             onClick={() => {
-              setMode(isRegister ? "login" : "register");
-              setMessage("");
+              navigate(isRegister ? "/business/login" : "/business/signup");
             }}
             className={s.toggleMode}
           >
@@ -345,6 +346,12 @@ export default function AuthPage() {
       </div>
 
       <div className={s.footerLinks}>
+        <Link to="/" className={s.footerLink}>
+          Back to marketplace
+        </Link>
+        <Link to="/login" className={s.footerLink}>
+          Customer login
+        </Link>
         <Link to="/privacy" className={s.footerLink}>
           Privacy Policy
         </Link>

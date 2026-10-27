@@ -28,12 +28,18 @@ const interestChipActive = "border-brand-600 bg-brand-50 text-brand-600";
 const interestChipInactive =
   "border-slate-200 bg-white text-slate-600 hover:border-slate-300";
 
-export default function CustomerAuthPage() {
+// Only addresses inside this site are allowed as a place to return to.
+const safeNext = (value) =>
+  value && value.startsWith("/") && !value.startsWith("//") ? value : "/";
+
+// mode: "login" or "register", decided by the address (/login or /signup).
+export default function CustomerAuthPage({ mode: initialMode = "login" }) {
   const navigate = useNavigate();
   const [searchParams] = useSearchParams();
-  const [mode, setMode] = useState(
-    searchParams.get("mode") === "register" ? "register" : "login",
-  );
+  const mode = searchParams.get("mode") === "register" ? "register" : initialMode;
+  // Where to go after logging in, e.g. back to the booking page they came from.
+  const next = safeNext(searchParams.get("next"));
+  const nextQuery = next === "/" ? "" : `?next=${encodeURIComponent(next)}`;
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -102,7 +108,7 @@ export default function CustomerAuthPage() {
         ? await registerCustomer({ ...form, interests })
         : await loginCustomer({ email: form.email, password: form.password });
       saveCustomerSession(data.token, data.customer);
-      navigate("/");
+      navigate(next);
     } catch (error) {
       setMessage(error.response?.data?.message || "Something went wrong");
     } finally {
@@ -292,8 +298,7 @@ export default function CustomerAuthPage() {
           <button
             type="button"
             onClick={() => {
-              setMode(isRegister ? "login" : "register");
-              setMessage("");
+              navigate(`${isRegister ? "/login" : "/signup"}${nextQuery}`);
             }}
             className={s.toggleMode}
           >
@@ -308,7 +313,7 @@ export default function CustomerAuthPage() {
         <Link to="/" className={s.footerLink}>
           Back to marketplace
         </Link>
-        <Link to="/login" className={s.footerLink}>
+        <Link to="/business/login" className={s.footerLink}>
           I run a business
         </Link>
       </div>

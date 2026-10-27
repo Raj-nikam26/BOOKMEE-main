@@ -1,5 +1,5 @@
 import express from 'express';
-import { listBookings, rescheduleBooking, updateBookingStatus } from '../controllers/bookingController.js';
+import { getBookingUpdates, listBookings, rescheduleBooking, updateBookingStatus } from '../controllers/bookingController.js';
 import { listMyReviews } from '../controllers/reviewController.js';
 import auth from '../middleware/auth.js';
 
@@ -10,6 +10,9 @@ router.get('/', auth, listBookings);
 
 // Reviews customers left for this business
 router.get('/reviews', auth, listMyReviews);
+
+// New bookings and customer cancellations since a given time (polled by the dashboard)
+router.get('/updates', auth, getBookingUpdates);
 
 // Route to update the status of a specific booking (e.g., mark as cancelled, confirmed)
 router.patch('/:id', auth, updateBookingStatus);

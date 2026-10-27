@@ -123,6 +123,15 @@ const bookingSchema = new mongoose.Schema(
       type: Boolean,
       default: false,
     },
+    // When the booking became confirmed (immediately for free bookings, after
+    // payment for paid ones). The business dashboard polls on this.
+    confirmedAt: {
+      type: Date,
+    },
+    // Set when the customer cancels, so the business can be told.
+    cancelledByCustomerAt: {
+      type: Date,
+    },
     isRescheduled: {
       type: Boolean,
       default: false,
@@ -134,6 +143,10 @@ const bookingSchema = new mongoose.Schema(
   },
   { timestamps: true }
 );
+
+// The business app asks "anything new since time X?" every few seconds.
+bookingSchema.index({ userId: 1, confirmedAt: -1 });
+bookingSchema.index({ userId: 1, cancelledByCustomerAt: -1 });
 
 // Last line of defence against double booking: two requests that pass the
 // availability check at the same moment cannot both save the same start time.
